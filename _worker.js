@@ -1,16 +1,28 @@
-addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  thisProxyServerUrlHttps = `${url.protocol}//${url.hostname}/`;
-  thisProxyServerUrl_hostOnly = url.host;
-  event.respondWith(handleRequest(event.request))
-})
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    thisProxyServerUrlHttps = `${url.protocol}//${url.host}/`;
+    thisProxyServerUrl_hostOnly = url.host;
+
+    if (!env.PROXY_PASSWORD) {
+      return new Response("PROXY_PASSWORD is not configured", {
+        status: 500,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      });
+    }
+
+    return handleRequest(request, env.PROXY_PASSWORD);
+  }
+}
 
 
 const str = "/";
 const lastVisitProxyCookie = "__PROXY_VISITEDSITE__";
 const passwordCookieName = "__PROXY_PWD__";
 const proxyHintCookieName = "__PROXY_HINT__";
-const password = "123";
 const showPasswordPage = true;
 const replaceUrlObj = "__location__yproxy__";
 
@@ -1092,7 +1104,7 @@ const redirectError = `
 
 //new URL(请求路径, base路径).href;
 
-async function handleRequest(request) {
+async function handleRequest(request, password) {
 
   // =======================================================================================
   // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 前置条件 *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

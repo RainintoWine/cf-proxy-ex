@@ -1,4 +1,6 @@
 {
-  "main": "_worker.js",
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-proxy-ex",
+  "pages_build_output_dir": "dist",
   "compatibility_date": "2025-07-13"
 }
